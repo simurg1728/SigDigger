@@ -482,6 +482,7 @@ FORMS += \
 RESOURCES += \
     icons/Icons.qrc
 
+unix {
 CONFIG += link_pkgconfig
 PKGCONFIG += suscan fftw3f
 
@@ -520,14 +521,22 @@ isEmpty(DISABLE_PORTAUDIO): packagesExist(portaudio-2.0): PORTAUDIO_FOUND = Yes
   }
 }
 
-LIBS += -L$$SUWIDGETS_INSTALL_LIBS
+LIBS += -lsuwidgets$$SUWIDGETS_BUILDTYPE_SUFFIX -ldl
 
+}
 
 win32 {
-  LIBS += -lwsock32 -lsuwidgets0
-} else {
-  LIBS += -lsuwidgets$$SUWIDGETS_BUILDTYPE_SUFFIX -ldl
+include($$PWD/../suscan/suscan.pri)
+
+CONFIG(release, debug|release): BUILD_CONFIG = release
+CONFIG(debug, debug|release): BUILD_CONFIG = debug
+INCLUDEPATH += $$PWD/../SuWidgets
+INCLUDEPATH += $$PWD/..
+LIBS += -L$$PWD/../build/SuWidgets/$$BUILD_CONFIG/ -lsuwidgets
+
 }
+
+LIBS += -L$$SUWIDGETS_INSTALL_LIBS
 
 DISTFILES += \
     icons/icon-alpha.png \
